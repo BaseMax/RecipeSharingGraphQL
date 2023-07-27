@@ -258,7 +258,7 @@ type Query {
 
 This query returns a list of recommended recipes based on the user's liked recipes and followed authors.
 
-**graphql
+```graphql
 type Query {
   recommendedRecipes(limit: Int!): [Recipe!]!
 }
