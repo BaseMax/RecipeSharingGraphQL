@@ -161,6 +161,149 @@ type AuthPayload {
 }
 ```
 
+**Recent Recipes Query:**
+
+This query returns a list of recently added recipes.
+
+```graphql
+type Query {
+  recentRecipes(limit: Int!): [Recipe!]!
+}
+```
+
+**Top Authors Query:**
+
+This query returns a list of top authors based on their total likes and contributions.
+
+```graphql
+type Query {
+  topAuthors(limit: Int!): [UserProfile!]!
+}
+```
+
+**Random Recipe Query:
+
+This query returns a random recipe from the platform.
+
+```graphql
+type Query {
+  randomRecipe: Recipe!
+}
+```
+
+**Add Comment Mutation:**
+
+This mutation allows users to add comments to a recipe.
+
+```graphql
+type Mutation {
+  addComment(recipeId: ID!, text: String!): Comment!
+}
+
+type Comment {
+  id: ID!
+  text: String!
+  author: UserProfile!
+  createdAt: String!
+}
+```
+
+**Update Comment Mutation:**
+
+This mutation allows users to update their own comments.
+
+```graphql
+type Mutation {
+  updateComment(commentId: ID!, text: String!): Comment!
+}
+```
+
+**Delete Comment Mutation:**
+
+This mutation allows users to delete their own comments.
+
+```graphql
+type Mutation {
+  deleteComment(commentId: ID!): ID!
+}
+```
+
+**Toggle Like Comment Mutation:**
+
+This mutation allows users to like or unlike a comment.
+
+```graphql
+type Mutation {
+  toggleLikeComment(commentId: ID!): Comment!
+}
+```
+
+**Toggle Follow User Mutation:**
+
+This mutation allows users to follow or unfollow other users.
+
+```graphql
+type Mutation {
+  toggleFollowUser(userId: ID!): UserProfile!
+}
+```
+
+**User Recipes Query:**
+
+This query allows users to retrieve their own submitted recipes.
+
+```graphql
+type Query {
+  userRecipes: [Recipe!]!
+}
+```
+
+**Recommended Recipes Query:**
+
+This query returns a list of recommended recipes based on the user's liked recipes and followed authors.
+
+**graphql
+type Query {
+  recommendedRecipes(limit: Int!): [Recipe!]!
+}
+```
+
+**Rate Recipe Mutation:**
+
+This mutation allows users to rate a recipe on a scale from 1 to 5.
+
+```graphql
+type Mutation {
+  rateRecipe(recipeId: ID!, rating: Int!): Recipe!
+}
+```
+
+**Report Recipe Mutation:**
+
+This mutation allows users to report a recipe for inappropriate content.
+
+```graphql
+type Mutation {
+  reportRecipe(recipeId: ID!, reason: String!): Recipe!
+}
+```
+
+**Update Profile Mutation:**
+
+This mutation allows users to update their profile information.
+
+```graphql
+type Mutation {
+  updateProfile(input: UpdateProfileInput!): UserProfile!
+}
+
+input UpdateProfileInput {
+  username: String
+  email: String
+  password: String
+}
+```
+
 **Updated API Reference**
 
 ```graphql
