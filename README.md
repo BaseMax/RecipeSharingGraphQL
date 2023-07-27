@@ -28,8 +28,8 @@ Develop a GraphQL API for a recipe sharing platform. Users can query for recipes
 **Clone the repository:**
 
 ```bash
-git clone https://github.com/your-username/recipe-sharing-api.git
-cd recipe-sharing-api
+git clone https://github.com/BaseMax/RecipeSharingGraphQL
+cd RecipeSharingGraphQL
 ```
 
 **Install dependencies:**
