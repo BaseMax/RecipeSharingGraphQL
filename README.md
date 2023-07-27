@@ -355,12 +355,29 @@ To enable user-specific functionality like submitting recipes, you need to imple
 
 ## API Reference
 
-The GraphQL API provides the following queries and mutations:
+The GraphQL API provides the following queries and mutations.
 
-- `Query: recipes` - Retrieve a list of recipes.
-- `Query: recipe` - Get details of a specific recipe by ID.
-- `Query: searchRecipes` - Search for recipes based on ingredients.
-- `Mutation: submitRecipe` - Submit a new recipe (requires authentication).
+### Queries:
+
+- `recipes`: Retrieve a list of recipes.
+- `recipe`: Get details of a specific recipe by ID.
+- `searchRecipes`: Search for recipes based on ingredients.
+- `popularRecipes`: Retrieve a list of popular recipes based on the number of likes and views.
+- `recentRecipes`: Retrieve a list of recently added recipes.
+- `topAuthors`: Retrieve a list of top authors based on their total likes and contributions.
+- `randomRecipe`: Get a random recipe from the platform.
+- `profile`: Retrieve the user's profile information.
+- `userRecipes`: Retrieve a list of recipes submitted by the authenticated user.
+- `recommendedRecipes`: Retrieve a list of recommended recipes based on the user's liked recipes and followed authors.
+
+### Mutations:
+
+- `submitRecipe`: Submit a new recipe (requires authentication).
+- `updateRecipe`: Update a recipe (requires authentication and ownership).
+- `likeRecipe`: Like a recipe.
+- `deleteRecipe`: Delete a recipe (requires authentication and ownership).
+- `addComment`: Add a comment to a recipe (requires authentication).
+- `updateComment`: Update a comment (requires authentication and ownership).
 
 ## Contributing
 
