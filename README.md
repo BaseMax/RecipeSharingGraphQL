@@ -177,7 +177,7 @@ type Query {
 }
 ```
 
-**Random Recipe Query:
+**Random Recipe Query:**
 
 This query returns a random recipe from the platform.
 
