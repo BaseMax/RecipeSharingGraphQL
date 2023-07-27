@@ -55,6 +55,174 @@ npm run dev
 
 The API will be accessible at `http://localhost:3000/graphql`.
 
+## Additional GraphQL
+
+### Additional Queries
+
+**User Profile Query:**
+
+This query allows users to retrieve their own profile information.
+
+```graphql
+type Query {
+  profile: UserProfile!
+}
+
+type UserProfile {
+  id: ID!
+  username: String!
+  email: String!
+  recipes: [Recipe!]!
+}
+```
+
+**Popular Recipes Query:**
+
+This query returns a list of popular recipes based on the number of likes and views.
+
+```graphql
+type Query {
+  popularRecipes(limit: Int!): [Recipe!]!
+}
+```
+
+### Additional Mutations
+
+**Update Recipe Mutation:**
+
+This mutation allows users to update their submitted recipes.
+
+```graphql
+type Mutation {
+  updateRecipe(recipeId: ID!, input: RecipeInput!): Recipe!
+}
+
+input RecipeInput {
+  title: String!
+  description: String!
+  ingredients: [String!]!
+  instructions: [String!]!
+}
+```
+
+**Like Recipe Mutation:**
+
+This mutation allows users to like a recipe.
+
+```graphql
+type Mutation {
+  likeRecipe(recipeId: ID!): Recipe!
+}
+```
+
+**Delete Recipe Mutation:**
+
+This mutation allows users to delete their submitted recipes.
+
+```graphql
+type Mutation {
+  deleteRecipe(recipeId: ID!): ID!
+}
+```
+
+**User Registration Mutation:**
+
+This mutation allows new users to register on the platform.
+
+```graphql
+type Mutation {
+  register(input: RegisterInput!): User!
+}
+
+input RegisterInput {
+  username: String!
+  email: String!
+  password: String!
+}
+```
+
+**User Login Mutation:**
+
+This mutation allows users to log in to the platform and obtain an access token.
+
+```graphql
+type Mutation {
+  login(input: LoginInput!): AuthPayload!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type AuthPayload {
+  user: User!
+  token: String!
+}
+Updated API Reference
+Your updated API Reference should now look like this:
+
+graphql
+Copy code
+type Query {
+  recipes: [Recipe!]!
+  recipe(recipeId: ID!): Recipe!
+  searchRecipes(ingredients: [String!]!): [Recipe!]!
+  popularRecipes(limit: Int!): [Recipe!]!
+  profile: UserProfile!
+}
+
+type Mutation {
+  submitRecipe(input: RecipeInput!): Recipe!
+  updateRecipe(recipeId: ID!, input: RecipeInput!): Recipe!
+  likeRecipe(recipeId: ID!): Recipe!
+  deleteRecipe(recipeId: ID!): ID!
+  register(input: RegisterInput!): User!
+  login(input: LoginInput!): AuthPayload!
+}
+
+type Recipe {
+  id: ID!
+  title: String!
+  description: String!
+  ingredients: [String!]!
+  instructions: [String!]!
+  author: UserProfile!
+  likes: Int!
+  views: Int!
+}
+
+type UserProfile {
+  id: ID!
+  username: String!
+  email: String!
+  recipes: [Recipe!]!
+}
+
+input RecipeInput {
+  title: String!
+  description: String!
+  ingredients: [String!]!
+  instructions: [String!]!
+}
+
+input RegisterInput {
+  username: String!
+  email: String!
+  password: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type AuthPayload {
+  user: UserProfile!
+  token: String!
+}
+```
+
 ## Authentication
 
 To enable user-specific functionality like submitting recipes, you need to implement authentication using tokens, OAuth, or any other authentication mechanism of your choice.
