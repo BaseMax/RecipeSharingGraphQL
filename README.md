@@ -159,28 +159,11 @@ type AuthPayload {
   user: User!
   token: String!
 }
-Updated API Reference
-Your updated API Reference should now look like this:
+```
 
-graphql
-Copy code
-type Query {
-  recipes: [Recipe!]!
-  recipe(recipeId: ID!): Recipe!
-  searchRecipes(ingredients: [String!]!): [Recipe!]!
-  popularRecipes(limit: Int!): [Recipe!]!
-  profile: UserProfile!
-}
+**Updated API Reference**
 
-type Mutation {
-  submitRecipe(input: RecipeInput!): Recipe!
-  updateRecipe(recipeId: ID!, input: RecipeInput!): Recipe!
-  likeRecipe(recipeId: ID!): Recipe!
-  deleteRecipe(recipeId: ID!): ID!
-  register(input: RegisterInput!): User!
-  login(input: LoginInput!): AuthPayload!
-}
-
+```graphql
 type Recipe {
   id: ID!
   title: String!
