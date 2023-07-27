@@ -57,8 +57,6 @@ The API will be accessible at `http://localhost:3000/graphql`.
 
 ## Additional GraphQL
 
-### Additional Queries
-
 **User Profile Query:**
 
 This query allows users to retrieve their own profile information.
@@ -85,8 +83,6 @@ type Query {
   popularRecipes(limit: Int!): [Recipe!]!
 }
 ```
-
-### Additional Mutations
 
 **Update Recipe Mutation:**
 
