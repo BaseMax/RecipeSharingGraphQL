@@ -5,6 +5,7 @@ import { UserService } from "src/user/user.service";
 import { JwtPayload } from "./interfaces/jwt.payload";
 import { JwtService } from "@nestjs/jwt";
 import { Auth } from "./entities/auth.entity";
+import * as argon2 from "argon2";
 
 @Injectable()
 export class AuthService {
@@ -29,6 +30,27 @@ export class AuthService {
     return { token, name: user.name };
   }
 
+  async login(loginInput: LoginInput): Promise<Auth> {
+    const existUser = await this.userService.findByEmail(loginInput.email);
+
+    if (!existUser) {
+      throw new BadRequestException(
+        "there are no account with this credentials , please try to logisn"
+      );
+    }
+
+    const isValidPassword = argon2.verify(
+      existUser.password,
+      loginInput.password
+    );
+
+    if (!isValidPassword)
+      throw new BadRequestException("credentials aren't correct");
+
+    const token = this.getToken({ name: existUser.name, sub: existUser._id });
+
+    return { token, name: existUser.name };
+  }
 
   findAll() {
     return `This action returns all auth`;
