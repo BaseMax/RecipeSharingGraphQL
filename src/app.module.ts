@@ -10,6 +10,7 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { join } from "path";
 import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin/landingPage/default";
 import { APP_FILTER } from "@nestjs/core";
+import { GraphqlErrorFilter } from "./common/error.handler";
 
 @Module({
   imports: [
@@ -41,10 +42,10 @@ import { APP_FILTER } from "@nestjs/core";
   ],
   controllers: [],
   providers: [
-    // {
-    //   provide: APP_FILTER,
-    //   useClass: GraphqlErrorFilter,
-    // },
+    {
+      provide: APP_FILTER,
+      useClass: GraphqlErrorFilter,
+    },
   ],
 })
 export class AppModule {}
