@@ -1,0 +1,37 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Auth {
+  token: String!
+  name: String!
+}
+
+type User {
+  email: String!
+  name: String!
+  createdAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Query {
+  auth(id: Int!): Auth!
+  user(id: Int!): User!
+}
+
+type Mutation {
+  signup(signup: SignupInput!): Auth!
+  removeAuth(id: Int!): Auth!
+  removeUser(id: Int!): User!
+}
+
+input SignupInput {
+  email: String!
+  name: String!
+  password: String!
+  confirmPassword: String!
+}

@@ -2,7 +2,7 @@
 
 This is a TypeScript-based GraphQL API for a recipe sharing platform. It allows users to query for recipes, search recipes by ingredients, and also enables them to submit their own recipes.
 
-Develop a GraphQL API for a recipe sharing platform. Users can query for recipes, search by ingredients, and submit their own recipes.
+Develop a GraphQL API for a recipe sharing platform. Users can query for recipes, search by ingredients, and submit their own recipes.  
 
 ## Features
 
