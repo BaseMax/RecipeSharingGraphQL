@@ -35,7 +35,7 @@ export class AuthService {
 
     if (!existUser) {
       throw new BadRequestException(
-        "there are no account with this credentials , please try to login"
+        "there are no account with this credentials , please try to signup"
       );
     }
 

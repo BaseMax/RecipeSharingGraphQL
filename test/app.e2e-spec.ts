@@ -7,7 +7,6 @@ import { UserDocument } from "src/user/interfaces/user.document";
 import { getModelToken } from "@nestjs/mongoose";
 import * as argon2 from "argon2";
 
-const gql = "/graphql";
 
 describe("AppController (e2e)", () => {
   let app: INestApplication;
@@ -125,12 +124,85 @@ describe("AppController (e2e)", () => {
           variables,
         });
 
-      console.log(response.body.errors[0]);
-
       expect(response.status).toBe(200);
       expect(response.body.data).toBeNull();
       expect(response.body.errors[0].message).toBe(
         "user with these credentials already exists"
+      );
+    });
+  });
+
+  describe("login", () => {
+    const mutation = `mutation Login($login: LoginInput!) {
+      login(login: $login) {
+        token
+        name
+      } 
+    }   `;
+
+    it("should login", async () => {
+      const variables = {
+        login: {
+          email: userInDb.email,
+          password: userInDb.password,
+        },
+      };
+
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .send({
+          query: mutation,
+          variables,
+        });
+
+      const { name, token } = response.body.data.login;
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeDefined();
+      expect(name).toBe(userInDb.name);
+      expect(token).toBeDefined();
+    });
+
+    it("should give validation error", async () => {
+      const variables = {
+        login: {
+          email: "testmailexampl.com",
+          password: "jkkj",
+        },
+      };
+
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .send({
+          query: mutation,
+          variables,
+        });
+
+      const validationErrors = response.body.errors[0].message;
+      expect(response.body.data).toBeNull();
+
+      expect(validationErrors).toContain("email must be an email");
+    });
+
+    it("should give error (user not exists)", async () => {
+      const variables = {
+        login: {
+          email: "john@gmail.com",
+          password: "john",
+        },
+      };
+
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .send({
+          query: mutation,
+          variables,
+        });
+
+      console.log(response.body.errors);
+
+      expect(response.body.data).toBeNull();
+      expect(response.body.errors[0].message).toContain(
+        "there are no account with this credentials , please try to signup"
       );
     });
   });
