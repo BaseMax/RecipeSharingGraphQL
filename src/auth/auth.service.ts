@@ -20,7 +20,7 @@ export class AuthService {
 
     if (alreadyExistsUser) {
       throw new BadRequestException(
-        "user with these credentials already exists  "
+        "user with these credentials already exists"
       );
     }
 
@@ -35,7 +35,7 @@ export class AuthService {
 
     if (!existUser) {
       throw new BadRequestException(
-        "there are no account with this credentials , please try to logisn"
+        "there are no account with this credentials , please try to login"
       );
     }
 

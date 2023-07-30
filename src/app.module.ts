@@ -21,11 +21,15 @@ import { GraphqlErrorFilter } from "./common/error.handler";
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
       driver: ApolloDriver,
       formatError: (error: GraphQLError) => {
+        // console.log(error);
+
         const graphQLFormattedError: GraphQLFormattedError = {
           message:
+            (error?.extensions.originalError as any)?.message ||
             (error?.extensions?.exception as any)?.response?.message ||
             error?.message,
         };
+
         return graphQLFormattedError;
       },
     }),
@@ -42,10 +46,10 @@ import { GraphqlErrorFilter } from "./common/error.handler";
   ],
   controllers: [],
   providers: [
-    {
-      provide: APP_FILTER,
-      useClass: GraphqlErrorFilter,
-    },
+    // {
+    //   provide: APP_FILTER,
+    //   useClass: GraphqlErrorFilter,
+    // },
   ],
 })
 export class AppModule {}
