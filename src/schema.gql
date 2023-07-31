@@ -18,14 +18,32 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type InstructionStep {
+  step: Int!
+  detail: String!
+}
+
+type Recipe {
+  _id: String!
+  title: String!
+  authorId: String!
+  ingredients: [String!]!
+  instructions: [InstructionStep!]!
+  description: String!
+}
+
 type Query {
   user(id: Int!): User!
+  recipe(id: Int!): Recipe!
 }
 
 type Mutation {
   signup(signup: SignupInput!): Auth!
   login(login: LoginInput!): Auth!
   removeUser(id: Int!): User!
+  createRecipe(createRecipeInput: CreateRecipeInput!): Recipe!
+  updateRecipe(updateRecipeInput: UpdateRecipeInput!): Recipe!
+  removeRecipe(id: Int!): Recipe!
 }
 
 input SignupInput {
@@ -38,4 +56,24 @@ input SignupInput {
 input LoginInput {
   email: String!
   password: String!
+}
+
+input CreateRecipeInput {
+  title: String!
+  description: String!
+  ingredients: [String!]!
+  instructions: [InstructionStepInput!]!
+}
+
+input InstructionStepInput {
+  step: Int!
+  detail: String!
+}
+
+input UpdateRecipeInput {
+  title: String
+  description: String
+  ingredients: [String!]
+  instructions: [InstructionStepInput!]
+  recipeId: String!
 }
