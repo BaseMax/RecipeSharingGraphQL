@@ -11,6 +11,7 @@ import { join } from "path";
 import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin/landingPage/default";
 import { APP_FILTER } from "@nestjs/core";
 import { GraphqlErrorFilter } from "./common/error.handler";
+import { RecipeModule } from './recipe/recipe.module';
 
 @Module({
   imports: [
@@ -43,6 +44,8 @@ import { GraphqlErrorFilter } from "./common/error.handler";
     AuthModule,
 
     UserModule,
+
+    RecipeModule,
   ],
   controllers: [],
   providers: [
