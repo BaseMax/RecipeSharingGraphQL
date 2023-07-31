@@ -7,15 +7,39 @@ import { UserDocument } from "src/user/interfaces/user.document";
 import { getModelToken } from "@nestjs/mongoose";
 import * as argon2 from "argon2";
 
-
 describe("AppController (e2e)", () => {
   let app: INestApplication;
   let userModel: Model<any>;
+  let recipeModel: Model<any>;
+
   let userInDb = {
     email: "test@gmail.com",
     password: "test",
     name: "jonathan",
   };
+
+  async function login() {
+    const variables = {
+      login: {
+        email: userInDb.email,
+        password: userInDb.password,
+      },
+    };
+    const mutation = `mutation Login($login: LoginInput!) {
+      login(login: $login) {
+        token
+        name
+      } 
+    }   `;
+
+    const response = await request(app.getHttpServer()).post("/graphql").send({
+      query: mutation,
+      variables,
+    });
+
+    const { name, token } = response.body.data.login;
+    return token;
+  }
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -26,9 +50,9 @@ describe("AppController (e2e)", () => {
     app.useGlobalPipes(new ValidationPipe());
 
     userModel = app.get<Model<any>>(getModelToken("User"));
-
+    recipeModel = app.get<Model<any>>(getModelToken("Recipe"));
     await userModel.deleteMany({});
-
+    await recipeModel.deleteMany({});
     await userModel.create({
       ...userInDb,
       password: await argon2.hash(userInDb.password),
@@ -197,8 +221,6 @@ describe("AppController (e2e)", () => {
           query: mutation,
           variables,
         });
-
-      console.log(response.body.errors);
 
       expect(response.body.data).toBeNull();
       expect(response.body.errors[0].message).toContain(
