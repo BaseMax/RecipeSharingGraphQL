@@ -1,11 +1,23 @@
-import { Injectable } from '@nestjs/common';
-import { CreateCommentInput } from './dto/create-comment.input';
-import { UpdateCommentInput } from './dto/update-comment.input';
+import { Injectable } from "@nestjs/common";
+import { CreateCommentInput } from "./dto/create-comment.input";
+import { UpdateCommentInput } from "./dto/update-comment.input";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
+import { CommentDocument } from "./interfaces/comment.document";
 
 @Injectable()
 export class CommentService {
-  create(createCommentInput: CreateCommentInput) {
-    return 'This action adds a new comment';
+  constructor(
+    @InjectModel("Comment") private commentModel: Model<CommentDocument>
+  ) {}
+  async create(
+    createCommentInput: CreateCommentInput,
+    userId: string
+  ): Promise<CommentDocument> {
+    return await this.commentModel.create({
+      ...createCommentInput,
+      authorId: userId,
+    });
   }
 
   findAll() {
