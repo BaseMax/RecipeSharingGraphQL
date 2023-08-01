@@ -18,6 +18,14 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type TopUser {
+  email: String!
+  name: String!
+  createdAt: DateTime!
+  recipes_count: Float!
+  _id: String!
+}
+
 type InstructionStep {
   step: Int!
   detail: String!
@@ -37,6 +45,7 @@ type Recipe {
 
 type Query {
   user(id: Int!): User!
+  topUsers(limit: Int!): [TopUser!]!
   recipe(id: Int!): Recipe!
   PopularRecipes(limit: Int!): [Recipe!]!
   RecentRecipes(limit: Int!): [Recipe!]!

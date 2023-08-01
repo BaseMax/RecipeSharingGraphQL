@@ -23,6 +23,41 @@ export class UserService {
     });
   }
 
+  async getTopUsers(limit: number): Promise<UserDocument[]> {
+    const users = await this.userModel
+      .aggregate([
+        {
+          $lookup: {
+            from: "recipes",
+            localField: "_id",
+            foreignField: "authorId",
+            as: "numberOfUserRecipes",
+          },
+        },
+        {
+          $addFields: {
+            recipes_count: { $size: "$numberOfUserRecipes" },
+          },
+        },
+        {
+          $project: {
+            name: 1,
+            _id: 1,
+            email: 1,
+            createdAt: 1,
+            recipes_count: 1,
+          },
+        },
+        {
+          $sort: { recipes_count: -1 },
+        },
+      ])
+      .limit(limit);
+    console.log(users);
+
+    return users;
+  }
+
   findAll() {
     return `This action returns all user`;
   }
