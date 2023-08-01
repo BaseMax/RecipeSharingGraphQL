@@ -30,6 +30,8 @@ type Recipe {
   ingredients: [String!]!
   instructions: [InstructionStep!]!
   description: String!
+  likes: [String!]!
+  numberOfLikes: Float!
 }
 
 type Query {
@@ -43,6 +45,7 @@ type Mutation {
   removeUser(id: Int!): User!
   createRecipe(createRecipeInput: CreateRecipeInput!): Recipe!
   updateRecipe(updateRecipeInput: UpdateRecipeInput!): Recipe!
+  likeRecipe(likeRecipeInput: UpdateRecipeInput!): Recipe!
   removeRecipe(id: Int!): Recipe!
 }
 

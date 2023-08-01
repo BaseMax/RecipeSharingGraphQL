@@ -316,4 +316,119 @@ describe("Recipe", () => {
       );
     });
   });
+
+  describe("like Recipe", () => {
+    let token: string;
+    let recipe: RecipeDocument;
+    let variables: any;
+
+    let likeMutation = `mutation LikeRecipe($likeRecipeInput: UpdateRecipeInput!) {
+      likeRecipe(likeRecipeInput: $likeRecipeInput) {
+        title
+        instructions {
+          detail
+          step
+        }
+        ingredients
+        description
+        authorId
+        _id
+        numberOfLikes 
+        likes
+      }
+    }`;
+
+    // async function createRecipe(){}
+
+    beforeAll(async () => {
+      token = await login();
+      recipe = await createRecipe(token);
+
+      variables = {
+        likeRecipeInput: {
+          recipeId: recipe._id.toString(),
+        },
+      };
+    });
+
+    it("should give authentication error", async () => {
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .send({
+          query: likeMutation,
+          variables: {
+            likeRecipeInput: {
+              recipeId: "64c75080b79a0d6d60d6c9d2",
+            },
+          },
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeNull();
+      expect(response.body.errors[0].message).toBe(
+        "you must login to get this feather"
+      );
+    });
+
+    it("should give not found error", async () => {
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .set("authorization", token)
+        .send({
+          query: likeMutation,
+          variables: {
+            likeRecipeInput: {
+              recipeId: "64c75080b79a0d6d60d6c9d2",
+            },
+          },
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeNull();
+      expect(response.body.errors[0].message).toBe(
+        "Recipe with this credentials doesn't exist"
+      );
+    });
+    it("should like the recipe and retrieve it back", async () => {
+      let response = await request(app.getHttpServer())
+        .post("/graphql")
+        .set("authorization", token)
+        .send({
+          query: likeMutation,
+          variables: {
+            likeRecipeInput: {
+              recipeId: recipe._id.toString(),
+            },
+          },
+        });
+
+      let { numberOfLikes, _id } = response.body.data.likeRecipe;
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeDefined();
+      expect(numberOfLikes).toBe(1);
+      expect(_id).toBe(recipe._id.toString());
+
+      response = await request(app.getHttpServer())
+        .post("/graphql")
+        .set("authorization", token)
+        .send({
+          query: likeMutation,
+          variables: {
+            likeRecipeInput: {
+              recipeId: recipe._id.toString(),
+            },
+          },
+        });
+
+      _id = response.body.data.likeRecipe._id;
+      numberOfLikes = response.body.data.likeRecipe.numberOfLikes;
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeDefined();
+      expect(numberOfLikes).toBe(0);
+      expect(_id).toBe(recipe._id.toString());
+    });
+  });
+
 });
