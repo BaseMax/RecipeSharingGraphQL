@@ -38,6 +38,7 @@ export const recipes = [
     title: "sandwich",
     numberOfLikes: 10,
     authorId: "64c74934cdd15e463c1e9809",
+    likes: ["64c74934cdd15e463c1e9809"],
   },
   {
     description: "a delicious meal",
@@ -51,5 +52,6 @@ export const recipes = [
     title: "pasta",
     numberOfLikes: 9,
     authorId: "64c74934cdd15e463c1e9809",
+    likes: ["64c74934cdd15e463c1e9809"],
   },
 ];

@@ -732,9 +732,61 @@ describe("Recipe", () => {
 
       const { sub: userId } = jwtService.decode(token);
 
-      
       expect(response.body.data).toBeTruthy();
       expect(response.body.data.userOwnRecipe[0].authorId).toBe(userId);
+    });
+
+    it("should get user favorite recipes", async () => {
+      const userFavoriteRecipeQuery = `query UserFavoriteRecipes($limit: Int!) {
+        userFavoriteRecipes(limit: $limit) {
+          _id
+          authorId
+          likes
+          createdAt
+          title
+        }
+      }`;
+
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .set("authorization", token)
+        .send({
+          query: userFavoriteRecipeQuery,
+          variables: {
+            limit: 3,
+          },
+        });
+
+      const { sub: userId } = jwtService.decode(token);
+
+      expect(response.body.data.userFavoriteRecipes[0].likes).toContain(userId);
+    });
+
+    it("should get authentication error ", async () => {
+      const userFavoriteRecipeQuery = `query UserFavoriteRecipes($limit: Int!) {
+        userFavoriteRecipes(limit: $limit) {
+          _id
+          authorId
+          likes
+          createdAt
+          title
+        }
+      }`;
+
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .send({
+          query: userFavoriteRecipeQuery,
+          variables: {
+            limit: 3,
+          },
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors[0].message).toBe(
+        "you must login to get this feather"
+      );
     });
   });
 });
