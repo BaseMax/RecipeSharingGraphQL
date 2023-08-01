@@ -25,9 +25,9 @@ export class RecipeResolver {
     return this.recipeService.findAll();
   }
 
-  @Query(() => Recipe, { name: "recipe" })
-  findOne(@Args("id", { type: () => Int }) id: number) {
-    return this.recipeService.findOne(id);
+  @Query(() => Recipe, { name: "randomRecipe" })
+  getRandomRecipe() {
+    return this.recipeService.getRandomRecipe();
   }
 
   @UseGuards(JwtAuthGuard)

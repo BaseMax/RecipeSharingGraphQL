@@ -46,7 +46,8 @@ type Recipe {
 type Query {
   user(id: Int!): User!
   topUsers(limit: Int!): [TopUser!]!
-  recipe(id: Int!): Recipe!
+  recipe: [Recipe!]!
+  randomRecipe: Recipe!
   PopularRecipes(limit: Int!): [Recipe!]!
   RecentRecipes(limit: Int!): [Recipe!]!
 }

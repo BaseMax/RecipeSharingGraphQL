@@ -24,8 +24,13 @@ export class RecipeService {
     return `This action returns all recipe`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} recipe`;
+  async getRandomRecipe(): Promise<RecipeDocument> {
+    const recipe = await this.recipeModel.aggregate([
+      {
+        $sample: { size: 1 },
+      },
+    ]);
+    return recipe[0];
   }
 
   async getPopularRecipes(limit: number): Promise<RecipeDocument[]> {
