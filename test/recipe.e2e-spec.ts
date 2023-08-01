@@ -613,5 +613,37 @@ describe("Recipe", () => {
         lessPopularRecipe.numberOfLikes
       );
     });
+
+    it("should get most recent recipes", async () => {
+      const recentRecipesQuery = `query RecentRecipes($limit: Int!) {
+        RecentRecipes(limit: $limit) {
+          _id
+          title
+          createdAt
+        }
+      }`;
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .send({
+          query: recentRecipesQuery,
+          variables: {
+            limit: 3,
+          },
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeDefined();
+      expect(response.body.errors).toBeUndefined();
+      const recipes = response.body.data.RecentRecipes;
+      const firstRecipeCreatedTime = new Date(recipes[0].createdAt);
+      const secondRecipeCreatedTime = new Date(recipes[1].createdAt);
+      const isFirstRecipeMostRecent =
+        firstRecipeCreatedTime < secondRecipeCreatedTime;
+
+      console.log(firstRecipeCreatedTime);
+      console.log(secondRecipeCreatedTime);
+
+      expect(isFirstRecipeMostRecent).toBeTruthy();
+    });
   });
 });

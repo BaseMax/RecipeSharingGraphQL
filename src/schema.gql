@@ -32,12 +32,14 @@ type Recipe {
   description: String!
   likes: [String!]!
   numberOfLikes: Float!
+  createdAt: DateTime!
 }
 
 type Query {
   user(id: Int!): User!
   recipe(id: Int!): Recipe!
   PopularRecipes(limit: Int!): [Recipe!]!
+  RecentRecipes(limit: Int!): [Recipe!]!
 }
 
 type Mutation {
