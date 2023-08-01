@@ -8,6 +8,7 @@ export interface RecipeDocument extends Document {
   readonly instructions: Instruction[];
   readonly likes?: string[];
   readonly numberOfLikes: number;
+  readonly createdAt: Date;
 }
 
 interface Instruction {

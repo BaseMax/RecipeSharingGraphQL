@@ -37,6 +37,15 @@ export class RecipeService {
       .limit(limit);
   }
 
+  async getRecentRecipes(limit: number): Promise<RecipeDocument[]> {
+    return await this.recipeModel
+      .find({})
+      .sort({
+        createdAt: 1,
+      })
+      .limit(limit);
+  }
+
   async update(
     updateRecipeInput: UpdateRecipeInput,
     userId: string

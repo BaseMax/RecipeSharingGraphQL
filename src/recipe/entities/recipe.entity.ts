@@ -60,6 +60,10 @@ export class Recipe {
   @Field()
   @Prop({ typ: Number, default: 0 })
   numberOfLikes: number;
+
+  @Field()
+  @Prop({ type: Date, default: Date.now })
+  createdAt: Date;
 }
 
 export const RecipeSchema = SchemaFactory.createForClass(Recipe);
