@@ -28,6 +28,15 @@ export class RecipeService {
     return `This action returns a #${id} recipe`;
   }
 
+  async getPopularRecipes(limit: number): Promise<RecipeDocument[]> {
+    return await this.recipeModel
+      .find({})
+      .sort({
+        numberOfLikes: -1,
+      })
+      .limit(limit);
+  }
+
   async update(
     updateRecipeInput: UpdateRecipeInput,
     userId: string
@@ -96,7 +105,7 @@ export class RecipeService {
     return recipe ? true : false;
   }
 
-  async remove( recipeId: string): Promise<RecipeDocument> {
+  async remove(recipeId: string): Promise<RecipeDocument> {
     return await this.recipeModel.findByIdAndDelete(recipeId);
   }
 }

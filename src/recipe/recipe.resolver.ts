@@ -72,6 +72,11 @@ export class RecipeResolver {
     return this.recipeService.retrieveLike(userId, updateRecipeInput.recipeId);
   }
 
+  @Query(() => [Recipe], { name: "PopularRecipes" })
+  getPopularRecipes(@Args("limit", { type: () => Int }) limit: number) {
+    return this.recipeService.getPopularRecipes(limit);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Mutation(() => Recipe)
   async removeRecipe(
