@@ -39,6 +39,27 @@ export class RecipeResolver {
     return this.recipeService.update(updateRecipeInput, userId);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Mutation(() => Recipe, { name: "likeRecipe" })
+  async likeRecipe(
+    @Args("likeRecipeInput") updateRecipeInput: UpdateRecipeInput,
+    @GetCurrentUserId() userId: string
+  ) {
+    const existRecipe = await this.recipeService.findByIdOrThrow(
+      updateRecipeInput.recipeId
+    );
+    const isLikedByUser = await this.recipeService.isRecipeLiked(
+      userId,
+      updateRecipeInput.recipeId
+    );
+
+    if (!isLikedByUser) {
+      return this.recipeService.likeRecipe(userId, updateRecipeInput.recipeId);
+    }
+
+    return this.recipeService.retrieveLike(userId, updateRecipeInput.recipeId);
+  }
+
   @Mutation(() => Recipe)
   removeRecipe(@Args("id", { type: () => Int }) id: number) {
     return this.recipeService.remove(id);

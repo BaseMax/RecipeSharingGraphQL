@@ -45,6 +45,21 @@ export class Recipe {
   @Field()
   @Prop({ type: String, required: true })
   description: string;
+
+  @Field(() => [String])
+  @Prop({
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+  })
+  likes: string[];
+
+  @Field()
+  @Prop({ typ: Number, default: 0 })
+  numberOfLikes: number;
 }
 
 export const RecipeSchema = SchemaFactory.createForClass(Recipe);

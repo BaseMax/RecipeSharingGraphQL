@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { CreateRecipeInput } from "./dto/create-recipe.input";
 import { UpdateRecipeInput } from "./dto/update-recipe.input";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import mongoose, { Model, ObjectId } from "mongoose";
 import { RecipeDocument } from "./interfaces/recIpe.documents";
 
 @Injectable()
@@ -42,11 +42,9 @@ export class RecipeService {
       $set: updateRecipeInput,
     });
 
-    const updatedRecipe = await this.recipeModel.findById(
-      updateRecipeInput.recipeId
-    );
-
-    return updatedRecipe;
+    return await this.recipeModel.findById(updateRecipeInput.recipeId, {
+      __v: 0,
+    });
   }
 
   hasPermissionToModify(recipe: RecipeDocument, userId: string): Boolean {
@@ -54,7 +52,7 @@ export class RecipeService {
   }
 
   async findByIdOrThrow(recipeId: string): Promise<RecipeDocument> {
-    const existRecipe = await this.recipeModel.findById(recipeId);
+    const existRecipe = await this.recipeModel.findById(recipeId, { __v: 0 });
     if (!existRecipe) {
       throw new BadRequestException(
         "Recipe with this credentials doesn't exist"
@@ -62,6 +60,46 @@ export class RecipeService {
     }
 
     return existRecipe;
+  }
+
+  async likeRecipe(userId: string, recipeId: string): Promise<RecipeDocument> {
+    await this.recipeModel.updateOne(
+      {
+        _id: new mongoose.Types.ObjectId(recipeId),
+      },
+      {
+        $push: { likes: userId },
+        $inc: { numberOfLikes: 1 },
+      }
+    );
+
+    return await this.recipeModel.findById(recipeId, { __v: 0 });
+  }
+
+  async retrieveLike(
+    userId: string,
+    recipeId: string
+  ): Promise<RecipeDocument> {
+    await this.recipeModel.updateOne(
+      {
+        _id: new mongoose.Types.ObjectId(recipeId),
+      },
+      {
+        $pull: { likes: userId },
+        $inc: { numberOfLikes: -1 },
+      }
+    );
+
+    return await this.recipeModel.findById(recipeId, { __v: 0 });
+  }
+
+  async isRecipeLiked(userId: string, recipeId: string): Promise<Boolean> {
+    const recipe = await this.recipeModel.findOne({
+      _id: new mongoose.Types.ObjectId(recipeId),
+      likes: new mongoose.Types.ObjectId(userId),
+    });
+
+    return recipe ? true : false;
   }
 
   remove(id: number) {
