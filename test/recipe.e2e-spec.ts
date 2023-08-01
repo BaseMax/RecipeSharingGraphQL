@@ -8,6 +8,7 @@ import { AppModule } from "src/app.module";
 import { RecipeDocument } from "src/recipe/interfaces/recIpe.documents";
 import { RecipeModule } from "src/recipe/recipe.module";
 import * as request from "supertest";
+import { recipes } from "./fakeData/fake.recipe";
 
 describe("Recipe", () => {
   let app: INestApplication;
@@ -559,7 +560,6 @@ describe("Recipe", () => {
           },
         });
 
-
       const { description, title, ingredients, _id } =
         response.body.data.removeRecipe;
 
@@ -569,6 +569,49 @@ describe("Recipe", () => {
       expect(ingredients).toContain(recipe.ingredients[0]);
       expect(description).toBe(recipe.description);
       expect(_id).toBe(recipe._id.toString());
+    });
+  });
+
+  describe("getting recipe", () => {
+    // let token: string;
+    // let recipe: RecipeDocument;
+    // let variables: any;
+
+    const popularRecipes = `query PopularRecipes($limit: Int!) {
+      PopularRecipes(limit: $limit) {
+        _id
+        title
+        numberOfLikes
+      }
+    }`;
+    beforeAll(async () => {
+      await recipeModel.insertMany(recipes);
+    });
+
+    it("should get popular recipes", async () => {
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .send({
+          query: popularRecipes,
+          variables: {
+            limit: 3,
+          },
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeDefined();
+      expect(response.body.errors).toBeUndefined();
+
+      const recipes = response.body.data.PopularRecipes;
+      const mostPopularRecipe = recipes[0];
+      const secondMostPopularRecipe = recipes[1];
+      const lessPopularRecipe = recipes[recipes.length - 1];
+      expect(mostPopularRecipe.numberOfLikes).toBeGreaterThanOrEqual(
+        secondMostPopularRecipe.numberOfLikes
+      );
+      expect(mostPopularRecipe.numberOfLikes).toBeGreaterThan(
+        lessPopularRecipe.numberOfLikes
+      );
     });
   });
 });
