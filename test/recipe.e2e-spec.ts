@@ -1,4 +1,4 @@
-import { INestApplication, ValidationPipe } from "@nestjs/common";
+import { Body, INestApplication, ValidationPipe } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { getModelToken } from "@nestjs/mongoose";
@@ -647,7 +647,7 @@ describe("Recipe", () => {
     });
 
     it("should get top authors", async () => {
-      const topUserQueries = `query TopUsers($limit: Int!) {
+      const topUserQuery = `query TopUsers($limit: Int!) {
         topUsers(limit: $limit) {
           email
           name
@@ -660,10 +660,30 @@ describe("Recipe", () => {
       const response = await request(app.getHttpServer())
         .post("/graphql")
         .send({
-          query: topUserQueries,
+          query: topUserQuery,
           variables: {
             limit: 3,
           },
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeDefined();
+    });
+
+    it("should get a random recipe", async () => {
+      const randomRecipeQuery = `query RandomRecipe {
+        randomRecipe {
+          _id
+          title
+          authorId
+          numberOfLikes
+        }
+      }`;
+
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .send({
+          query: randomRecipeQuery,
         });
 
       expect(response.status).toBe(200);
