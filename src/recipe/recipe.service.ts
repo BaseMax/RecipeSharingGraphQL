@@ -57,6 +57,17 @@ export class RecipeService {
       .limit(limit);
   }
 
+  async getUserFavoriteRecipes(
+    userId: string,
+    limit: number
+  ): Promise<RecipeDocument[]> {
+    return this.recipeModel
+      .find({
+        likes: userId,
+      })
+      .limit(limit);
+  }
+
   async update(
     updateRecipeInput: UpdateRecipeInput,
     userId: string

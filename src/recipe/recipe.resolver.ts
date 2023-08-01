@@ -85,7 +85,16 @@ export class RecipeResolver {
   @UseGuards(JwtAuthGuard)
   @Query(() => [Recipe], { name: "userOwnRecipe" })
   getUserRecipes(@GetCurrentUserId() userId: string) {
-    return this.recipeService.getUserOwnRecipes (userId);
+    return this.recipeService.getUserOwnRecipes(userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Query(() => [Recipe], { name: "userFavoriteRecipes" })
+  getUserFavoriteRecipe(
+    @Args("limit", { type: () => Int }) limit: number,
+    @GetCurrentUserId() userId: string
+  ) {
+    return this.recipeService.getUserFavoriteRecipes(userId, limit);
   }
 
   @UseGuards(JwtAuthGuard)

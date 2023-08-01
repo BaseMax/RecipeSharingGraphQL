@@ -51,6 +51,7 @@ type Query {
   RecentRecipes(limit: Int!): [Recipe!]!
   randomRecipe: Recipe!
   userOwnRecipe: [Recipe!]!
+  userFavoriteRecipes(limit: Int!): [Recipe!]!
 }
 
 type Mutation {
