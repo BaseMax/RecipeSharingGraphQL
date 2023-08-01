@@ -43,6 +43,11 @@ type Recipe {
   createdAt: DateTime!
 }
 
+type Comment {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 type Query {
   user(id: Int!): User!
   topUsers(limit: Int!): [TopUser!]!
@@ -52,6 +57,7 @@ type Query {
   randomRecipe: Recipe!
   userOwnRecipe: [Recipe!]!
   userFavoriteRecipes(limit: Int!): [Recipe!]!
+  comment(id: Int!): Comment!
 }
 
 type Mutation {
@@ -62,6 +68,9 @@ type Mutation {
   updateRecipe(updateRecipeInput: UpdateRecipeInput!): Recipe!
   likeRecipe(likeRecipeInput: UpdateRecipeInput!): Recipe!
   removeRecipe(removeRecipeInput: UpdateRecipeInput!): Recipe!
+  createComment(createCommentInput: CreateCommentInput!): Comment!
+  updateComment(updateCommentInput: UpdateCommentInput!): Comment!
+  removeComment(id: Int!): Comment!
 }
 
 input SignupInput {
@@ -94,4 +103,15 @@ input UpdateRecipeInput {
   ingredients: [String!]
   instructions: [InstructionStepInput!]
   recipeId: String!
+}
+
+input CreateCommentInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateCommentInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
 }

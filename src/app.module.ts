@@ -12,6 +12,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin
 import { APP_FILTER } from "@nestjs/core";
 import { GraphqlErrorFilter } from "./common/error.handler";
 import { RecipeModule } from './recipe/recipe.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -46,6 +47,8 @@ import { RecipeModule } from './recipe/recipe.module';
     UserModule,
 
     RecipeModule,
+
+    CommentModule,
   ],
   controllers: [],
   providers: [

@@ -47,6 +47,12 @@ DB_URL=mongodb://your-mongodb-url
 PORT=3000
 ```
 
+**Run e2e test:**
+
+- 1 : npm run auth:test
+
+- 2 : npm run recipe:test
+
 **Start the development server:**
 
 ```
