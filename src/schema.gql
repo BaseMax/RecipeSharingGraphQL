@@ -37,6 +37,7 @@ type Recipe {
 type Query {
   user(id: Int!): User!
   recipe(id: Int!): Recipe!
+  PopularRecipes(limit: Int!): [Recipe!]!
 }
 
 type Mutation {

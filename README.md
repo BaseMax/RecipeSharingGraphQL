@@ -76,7 +76,7 @@ type UserProfile {
 
 **Popular Recipes Query:**
 
-This query returns a list of popular recipes based on the number of likes and views.
+This query returns a list of popular recipes based on the number of likes.
 
 ```graphql
 type Query {
