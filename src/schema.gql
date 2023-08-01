@@ -44,8 +44,11 @@ type Recipe {
 }
 
 type Comment {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  _id: String!
+  content: String!
+  authorId: String!
+  recipeId: String!
+  createdAt: DateTime!
 }
 
 type Query {
@@ -106,12 +109,12 @@ input UpdateRecipeInput {
 }
 
 input CreateCommentInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  recipeId: String!
+  content: String!
 }
 
 input UpdateCommentInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  recipeId: String
+  content: String
   id: Int!
 }
