@@ -3,7 +3,7 @@ import { RecipeService } from "./recipe.service";
 import { Recipe } from "./entities/recipe.entity";
 import { CreateRecipeInput } from "./dto/create-recipe.input";
 import { UpdateRecipeInput } from "./dto/update-recipe.input";
-import { UseGuards } from "@nestjs/common";
+import { BadRequestException, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "src/auth/guards/jwt.auth.guard";
 import { GetCurrentUserId } from "src/common/get.current.userId";
 
@@ -32,10 +32,22 @@ export class RecipeResolver {
 
   @UseGuards(JwtAuthGuard)
   @Mutation(() => Recipe)
-  updateRecipe(
+  async updateRecipe(
     @Args("updateRecipeInput") updateRecipeInput: UpdateRecipeInput,
     @GetCurrentUserId() userId: string
   ) {
+    const existRecipe = await this.recipeService.findByIdOrThrow(
+      updateRecipeInput.recipeId
+    );
+
+    const isAllowed = this.recipeService.hasPermissionToModify(
+      existRecipe,
+      userId
+    );
+    if (!isAllowed) {
+      throw new BadRequestException("you aren't allowed to modify");
+    }
+
     return this.recipeService.update(updateRecipeInput, userId);
   }
 
@@ -60,8 +72,20 @@ export class RecipeResolver {
     return this.recipeService.retrieveLike(userId, updateRecipeInput.recipeId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Mutation(() => Recipe)
-  removeRecipe(@Args("id", { type: () => Int }) id: number) {
-    return this.recipeService.remove(id);
+  async removeRecipe(
+    @Args("removeRecipeInput") removeRecipeInput: UpdateRecipeInput,
+    @GetCurrentUserId() userId: string
+  ) {
+    const recipe = await this.recipeService.findByIdOrThrow(
+      removeRecipeInput.recipeId
+    );
+
+    const isAllowed = this.recipeService.hasPermissionToModify(recipe, userId);
+    if (!isAllowed) {
+      throw new BadRequestException("you aren't allowed to modify");
+    }
+    return this.recipeService.remove(removeRecipeInput.recipeId);
   }
 }

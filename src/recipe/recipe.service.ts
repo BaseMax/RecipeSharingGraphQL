@@ -32,12 +32,6 @@ export class RecipeService {
     updateRecipeInput: UpdateRecipeInput,
     userId: string
   ): Promise<RecipeDocument> {
-    const existRecipe = await this.findByIdOrThrow(updateRecipeInput.recipeId);
-    const isAllowed = this.hasPermissionToModify(existRecipe, userId);
-    if (!isAllowed) {
-      throw new BadRequestException("you aren't allowed to modify");
-    }
-
     await this.recipeModel.findByIdAndUpdate(updateRecipeInput.recipeId, {
       $set: updateRecipeInput,
     });
@@ -102,7 +96,7 @@ export class RecipeService {
     return recipe ? true : false;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} recipe`;
+  async remove( recipeId: string): Promise<RecipeDocument> {
+    return await this.recipeModel.findByIdAndDelete(recipeId);
   }
 }

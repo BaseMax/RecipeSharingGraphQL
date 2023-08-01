@@ -46,7 +46,7 @@ type Mutation {
   createRecipe(createRecipeInput: CreateRecipeInput!): Recipe!
   updateRecipe(updateRecipeInput: UpdateRecipeInput!): Recipe!
   likeRecipe(likeRecipeInput: UpdateRecipeInput!): Recipe!
-  removeRecipe(id: Int!): Recipe!
+  removeRecipe(removeRecipeInput: UpdateRecipeInput!): Recipe!
 }
 
 input SignupInput {
