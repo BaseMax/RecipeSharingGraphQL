@@ -645,5 +645,29 @@ describe("Recipe", () => {
 
       expect(isFirstRecipeMostRecent).toBeTruthy();
     });
+
+    it("should get top authors", async () => {
+      const topUserQueries = `query TopUsers($limit: Int!) {
+        topUsers(limit: $limit) {
+          email
+          name
+          createdAt
+          recipes_count
+          _id
+        }
+      }`;
+
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .send({
+          query: topUserQueries,
+          variables: {
+            limit: 3,
+          },
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeDefined();
+    });
   });
 });
