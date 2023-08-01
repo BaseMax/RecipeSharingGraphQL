@@ -25,11 +25,6 @@ export class RecipeResolver {
     return this.recipeService.findAll();
   }
 
-  @Query(() => Recipe, { name: "randomRecipe" })
-  getRandomRecipe() {
-    return this.recipeService.getRandomRecipe();
-  }
-
   @UseGuards(JwtAuthGuard)
   @Mutation(() => Recipe)
   async updateRecipe(
@@ -80,6 +75,17 @@ export class RecipeResolver {
   @Query(() => [Recipe], { name: "RecentRecipes" })
   getRecentRecipes(@Args("limit", { type: () => Int }) limit: number) {
     return this.recipeService.getRecentRecipes(limit);
+  }
+
+  @Query(() => Recipe, { name: "randomRecipe" })
+  getRandomRecipe() {
+    return this.recipeService.getRandomRecipe();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Query(() => [Recipe], { name: "userOwnRecipe" })
+  getUserRecipes(@GetCurrentUserId() userId: string) {
+    return this.recipeService.getUserOwnRecipes (userId);
   }
 
   @UseGuards(JwtAuthGuard)

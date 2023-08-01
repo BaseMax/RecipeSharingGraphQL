@@ -33,6 +33,12 @@ export class RecipeService {
     return recipe[0];
   }
 
+  async getUserOwnRecipes(userId: string): Promise<RecipeDocument[]> {
+    return await this.recipeModel.find({
+      authorId: new mongoose.Types.ObjectId(userId),
+    });
+  }
+
   async getPopularRecipes(limit: number): Promise<RecipeDocument[]> {
     return await this.recipeModel
       .find({})

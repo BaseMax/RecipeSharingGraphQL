@@ -53,7 +53,6 @@ export class UserService {
         },
       ])
       .limit(limit);
-    console.log(users);
 
     return users;
   }
