@@ -18,8 +18,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "recipe:test" : "jest --config ./test/jest-e2e.json -- test/recipe.e2e-spec.ts",
-    "auth:test" :"jest --config ./test/jest-e2e.json -- test/app.e2e-spec.ts"
+    "recipe:test": "jest --config ./test/jest-e2e.json -- test/recipe.e2e-spec.ts",
+    "auth:test": "jest --config ./test/jest-e2e.json -- test/app.e2e-spec.ts",
+    "comment:test": "jest --config ./test/jest-e2e.json -- test/comment.e2e-spec.ts"
   },
   "dependencies": {
     "@nestjs/apollo": "^12.0.7",
