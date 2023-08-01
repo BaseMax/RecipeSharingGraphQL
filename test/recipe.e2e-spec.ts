@@ -573,22 +573,23 @@ describe("Recipe", () => {
   });
 
   describe("getting recipe", () => {
-    // let token: string;
+    let token: string;
     // let recipe: RecipeDocument;
     // let variables: any;
 
-    const popularRecipes = `query PopularRecipes($limit: Int!) {
-      PopularRecipes(limit: $limit) {
-        _id
-        title
-        numberOfLikes
-      }
-    }`;
     beforeAll(async () => {
+      token = await login();
       await recipeModel.insertMany(recipes);
     });
 
     it("should get popular recipes", async () => {
+      const popularRecipes = `query PopularRecipes($limit: Int!) {
+        PopularRecipes(limit: $limit) {
+          _id
+          title
+          numberOfLikes
+        }
+      }`;
       const response = await request(app.getHttpServer())
         .post("/graphql")
         .send({
@@ -640,9 +641,6 @@ describe("Recipe", () => {
       const isFirstRecipeMostRecent =
         firstRecipeCreatedTime < secondRecipeCreatedTime;
 
-      console.log(firstRecipeCreatedTime);
-      console.log(secondRecipeCreatedTime);
-
       expect(isFirstRecipeMostRecent).toBeTruthy();
     });
 
@@ -688,6 +686,55 @@ describe("Recipe", () => {
 
       expect(response.status).toBe(200);
       expect(response.body.data).toBeDefined();
+    });
+
+    it("should get authentication error ", async () => {
+      const userOwnRecipe = `query UserOwnRecipe {
+        userOwnRecipe {
+          _id
+          title
+          authorId
+          createdAt
+          numberOfLikes
+        }
+      }`;
+
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .send({
+          query: userOwnRecipe,
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors[0].message).toBe(
+        "you must login to get this feather"
+      );
+    });
+
+    it("should get user own recipes", async () => {
+      const userOwnRecipe = `query UserOwnRecipe {
+        userOwnRecipe {
+          _id
+          title
+          authorId
+          createdAt
+          numberOfLikes
+        }
+      }`;
+
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .set("authorization", token)
+        .send({
+          query: userOwnRecipe,
+        });
+
+      const { sub: userId } = jwtService.decode(token);
+
+      
+      expect(response.body.data).toBeTruthy();
+      expect(response.body.data.userOwnRecipe[0].authorId).toBe(userId);
     });
   });
 });
