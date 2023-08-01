@@ -431,4 +431,144 @@ describe("Recipe", () => {
     });
   });
 
+  describe("delete recipe", () => {
+    let token: string;
+    let recipe: RecipeDocument;
+    let variables: any;
+    const removeRecipeMutation = `mutation RemoveRecipe($removeRecipeInput: UpdateRecipeInput!) {
+      removeRecipe(removeRecipeInput: $removeRecipeInput) {
+        title
+        likes
+        numberOfLikes
+        instructions {
+          detail
+          step
+        }
+        ingredients
+        description
+        _id
+        authorId
+      }
+    }`;
+
+    beforeAll(async () => {
+      token = await login();
+      recipe = await createRecipe(token);
+
+      variables = {
+        likeRecipeInput: {
+          recipeId: recipe._id.toString(),
+        },
+      };
+    });
+
+    it("should give authentication", async () => {
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .send({
+          query: removeRecipeMutation,
+          variables: {
+            removeRecipeInput: {
+              recipeId: "",
+            },
+          },
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeNull();
+      expect(response.body.errors[0].message).toBe(
+        "you must login to get this feather"
+      );
+    });
+
+    it("should give not found error", async () => {
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .set("authorization", token)
+        .send({
+          query: removeRecipeMutation,
+          variables: {
+            removeRecipeInput: {
+              recipeId: "64c75080b79a0d6d60d6c9d2",
+            },
+          },
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeNull();
+      expect(response.body.errors[0].message).toBe(
+        "Recipe with this credentials doesn't exist"
+      );
+    });
+
+    it("should give validation error", async () => {
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .set("authorization", token)
+        .send({
+          query: removeRecipeMutation,
+          variables: {
+            removeRecipeInput: {
+              recipeId: "notMongodbId",
+            },
+          },
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeNull();
+      expect(response.body.errors[0].message).toContain(
+        "recipeId must be a valid Id"
+      );
+    });
+
+    it("should give error not allowed ", async () => {
+      const token = jwtService.sign({
+        sub: "64c74934cdd15e463c1e9802",
+        name: "johnie",
+      });
+
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .set("authorization", token)
+        .send({
+          query: removeRecipeMutation,
+          variables: {
+            removeRecipeInput: {
+              recipeId: recipe._id.toString(),
+            },
+          },
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeNull();
+      expect(response.body.errors[0].message).toBe(
+        "you aren't allowed to modify"
+      );
+    });
+
+    it("should give deleted recipe back", async () => {
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .set("authorization", token)
+        .send({
+          query: removeRecipeMutation,
+          variables: {
+            removeRecipeInput: {
+              recipeId: recipe._id.toString(),
+            },
+          },
+        });
+
+
+      const { description, title, ingredients, _id } =
+        response.body.data.removeRecipe;
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeDefined();
+      expect(title).toBe(recipe.title);
+      expect(ingredients).toContain(recipe.ingredients[0]);
+      expect(description).toBe(recipe.description);
+      expect(_id).toBe(recipe._id.toString());
+    });
+  });
 });
