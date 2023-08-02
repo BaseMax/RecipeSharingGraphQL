@@ -306,7 +306,6 @@ describe("Comment", () => {
       );
     });
 
-
     it("should give not found", async () => {
       const response = await request(app.getHttpServer())
         .post("/graphql")
@@ -328,7 +327,6 @@ describe("Comment", () => {
       );
     });
 
-
     it("should give not allowed error", async () => {
       const token = jwtService.sign({
         sub: "64c74934cdd15e463c1e9802",
@@ -347,8 +345,6 @@ describe("Comment", () => {
             },
           },
         });
-
-   
 
       expect(response.status).toBe(200);
       expect(response.body.data).toBeNull();
@@ -377,6 +373,138 @@ describe("Comment", () => {
       expect(_id).toBe(comment._id.toString());
       expect(content).toBe("new content");
       expect(recipeId).toBe(recipe._id.toString());
+    });
+  });
+
+  describe("delete comment", () => {
+    let token: string;
+    let recipe: RecipeDocument;
+    let comment: CommentDocument;
+    const deleteCommentMutation = `mutation RemoveComment($deleteCommentInput: DeleteCommentInput!) {
+      removeComment(deleteCommentInput: $deleteCommentInput) {
+        _id
+        content
+        authorId
+        recipeId
+        createdAt
+      }
+    }`;
+    beforeAll(async () => {
+      token = await login();
+      recipe = await createRecipe(token);
+      comment = await createComment(token, recipe._id.toString());
+    });
+
+    afterAll(async () => {
+      await recipeModel.deleteMany();
+      await recipeModel.deleteMany();
+    });
+    it("should give authentication error", async () => {
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .send({
+          query: deleteCommentMutation,
+          variables: {
+            deleteCommentInput: {
+              id: "64c9e67ef2dde04c068f10e2",
+            },
+          },
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors[0].message).toBe(
+        "you must login to get this feather"
+      );
+    });
+
+    it("should give validation error", async () => {
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .set("authorization", token)
+        .send({
+          query: deleteCommentMutation,
+          variables: {
+            deleteCommentInput: {
+              id: "notMongoId",
+            },
+          },
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeNull();
+      expect(response.body.errors[0].message).toContain(
+        "id must be a mongodb id"
+      );
+    });
+
+    it("should give not found", async () => {
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .set("authorization", token)
+        .send({
+          query: deleteCommentMutation,
+          variables: {
+            deleteCommentInput: {
+              id: "64c74934cdd15e463c1e9802",
+            },
+          },
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeNull();
+      expect(response.body.errors[0].message).toBe(
+        "Comment with this credentials doesn't exist"
+      );
+    });
+
+    it("should give not allowed error", async () => {
+      const token = jwtService.sign({
+        sub: "64c74934cdd15e463c1e9802",
+        name: "johnie",
+      });
+
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .set("authorization", token)
+        .send({
+          query: deleteCommentMutation,
+          variables: {
+            deleteCommentInput: {
+              id: comment._id.toString(),
+            },
+          },
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeNull();
+      expect(response.body.errors[0].message).toBe(
+        "you aren't allowed to modify"
+      );
+    });
+    it("should delete comment", async () => {
+      const response = await request(app.getHttpServer())
+        .post("/graphql")
+        .set("authorization", token)
+        .send({
+          query: deleteCommentMutation,
+          variables: {
+            deleteCommentInput: {
+              id: comment._id.toString(),
+            },
+          },
+        });
+
+
+      const { _id, content, recipeId, authorId } =
+        response.body.data.removeComment;
+      const { sub: userId } = jwtService.decode(token);
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeTruthy();
+      expect(_id).toBe(comment._id.toString());
+      expect(content).toBe(comment.content);
+      expect(recipeId).toBe(recipe._id.toString());
+      expect(authorId).toBe(userId);
     });
   });
 });
