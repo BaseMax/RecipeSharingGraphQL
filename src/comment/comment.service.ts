@@ -58,7 +58,9 @@ export class CommentService {
     return existComment;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} comment`;
+  async remove(id: string): Promise<CommentDocument> {
+    return await this.commentModel.findOneAndDelete({
+      _id: new mongoose.Types.ObjectId(id),
+    });
   }
 }

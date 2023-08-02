@@ -10,3 +10,10 @@ export class UpdateCommentInput extends PartialType(
   @IsMongoId()
   id: string;
 }
+
+@InputType()
+export class DeleteCommentInput {
+  @Field(() => String)
+  @IsMongoId()
+  id: string;
+}

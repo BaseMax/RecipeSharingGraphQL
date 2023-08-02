@@ -2,7 +2,10 @@ import { Resolver, Query, Mutation, Args, Int } from "@nestjs/graphql";
 import { CommentService } from "./comment.service";
 import { Comment } from "./entities/comment.entity";
 import { CreateCommentInput } from "./dto/create-comment.input";
-import { UpdateCommentInput } from "./dto/update-comment.input";
+import {
+  DeleteCommentInput,
+  UpdateCommentInput,
+} from "./dto/update-comment.input";
 import { BadRequestException, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "src/auth/guards/jwt.auth.guard";
 import { GetCurrentUserId } from "src/common/get.current.userId";
@@ -58,8 +61,23 @@ export class CommentResolver {
     return this.commentService.update(updateCommentInput);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Mutation(() => Comment)
-  removeComment(@Args("id", { type: () => Int }) id: number) {
-    return this.commentService.remove(id);
+  async removeComment(
+    @Args("deleteCommentInput") deleteCommentInput: DeleteCommentInput,
+    @GetCurrentUserId() userId : string
+  ) {
+    const existComment = await this.commentService.findByIdOrThrow(
+      deleteCommentInput.id
+    );
+    const isAllowed = this.commentService.hasPermissionToModify(
+      existComment,
+      userId
+    );
+    if (!isAllowed) {
+      throw new BadRequestException("you aren't allowed to modify");
+    }
+
+    return this.commentService.remove(deleteCommentInput.id);
   }
 }

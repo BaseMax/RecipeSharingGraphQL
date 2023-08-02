@@ -73,7 +73,7 @@ type Mutation {
   removeRecipe(removeRecipeInput: UpdateRecipeInput!): Recipe!
   createComment(createCommentInput: CreateCommentInput!): Comment!
   updateComment(updateCommentInput: UpdateCommentInput!): Comment!
-  removeComment(id: Int!): Comment!
+  removeComment(deleteCommentInput: DeleteCommentInput!): Comment!
 }
 
 input SignupInput {
@@ -115,5 +115,9 @@ input CreateCommentInput {
 
 input UpdateCommentInput {
   content: String
+  id: String!
+}
+
+input DeleteCommentInput {
   id: String!
 }
