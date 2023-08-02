@@ -114,7 +114,6 @@ input CreateCommentInput {
 }
 
 input UpdateCommentInput {
-  recipeId: String
   content: String
-  id: Int!
+  id: String!
 }

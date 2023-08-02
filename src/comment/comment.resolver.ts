@@ -3,7 +3,7 @@ import { CommentService } from "./comment.service";
 import { Comment } from "./entities/comment.entity";
 import { CreateCommentInput } from "./dto/create-comment.input";
 import { UpdateCommentInput } from "./dto/update-comment.input";
-import { UseGuards } from "@nestjs/common";
+import { BadRequestException, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "src/auth/guards/jwt.auth.guard";
 import { GetCurrentUserId } from "src/common/get.current.userId";
 import { RecipeService } from "src/recipe/recipe.service";
@@ -16,7 +16,7 @@ export class CommentResolver {
   ) {}
 
   @UseGuards(JwtAuthGuard)
-  @Mutation(() => Comment )
+  @Mutation(() => Comment)
   async createComment(
     @Args("createCommentInput") createCommentInput: CreateCommentInput,
     @GetCurrentUserId() userId: string
@@ -37,14 +37,25 @@ export class CommentResolver {
     return this.commentService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Mutation(() => Comment)
-  updateComment(
-    @Args("updateCommentInput") updateCommentInput: UpdateCommentInput
+  async updateComment(
+    @Args("updateCommentInput") updateCommentInput: UpdateCommentInput,
+    @GetCurrentUserId() userId: string
   ) {
-    return this.commentService.update(
-      updateCommentInput.id,
-      updateCommentInput
+    const existComment = await this.commentService.findByIdOrThrow(
+      updateCommentInput.id
     );
+
+    const isAllowed = this.commentService.hasPermissionToModify(
+      existComment,
+      userId
+    );
+    if (!isAllowed) {
+      throw new BadRequestException("you aren't allowed to modify");
+    }
+
+    return this.commentService.update(updateCommentInput);
   }
 
   @Mutation(() => Comment)
