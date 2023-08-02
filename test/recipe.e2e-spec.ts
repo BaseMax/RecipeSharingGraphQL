@@ -8,7 +8,7 @@ import { AppModule } from "src/app.module";
 import { RecipeDocument } from "src/recipe/interfaces/recIpe.documents";
 import { RecipeModule } from "src/recipe/recipe.module";
 import * as request from "supertest";
-import { recipes } from "./fakeData/fake.recipe";
+import { getRecipes } from "./fakeData/fake.recipe";
 
 describe("Recipe", () => {
   let app: INestApplication;
@@ -579,7 +579,9 @@ describe("Recipe", () => {
 
     beforeAll(async () => {
       token = await login();
-      await recipeModel.insertMany(recipes);
+      const { sub: userId } = jwtService.decode(token);
+
+      await recipeModel.insertMany(getRecipes(userId));
     });
 
     it("should get popular recipes", async () => {
