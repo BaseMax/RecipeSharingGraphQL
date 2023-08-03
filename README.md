@@ -53,7 +53,7 @@ PORT=3000
 
 - 2 : npm run test:recipe
 
--3 : npm run test:comment
+- 3 : npm run test:comment
 
 **Start the development server:**
 
